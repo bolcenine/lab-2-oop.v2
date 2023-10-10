@@ -1,0 +1,161 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введіть розмір масиву N: ");
+        int N = int.Parse(Console.ReadLine());
+
+        double[] arr = new double[N];
+
+        Console.WriteLine("Введіть елементи масиву:");
+
+        for (int i = 0; i < N; i++)
+        {
+            arr[i] = double.Parse(Console.ReadLine());
+        }
+
+        double maxByAbsolute = arr[0];
+        double sumBetweenPositives = 0;
+        int positiveCount = 0;
+
+        for (int i = 0; i < N; i++)
+        {
+            if (Math.Abs(arr[i]) > Math.Abs(maxByAbsolute))
+            {
+                maxByAbsolute = arr[i];
+            }
+
+            if (arr[i] > 0)
+            {
+                positiveCount++;
+                if (positiveCount == 1)
+                {
+                    sumBetweenPositives = 0;
+                }
+                else if (positiveCount == 2)
+                {
+                    break;
+                }
+            }
+
+            if (positiveCount == 1 && positiveCount < 2)
+            {
+                sumBetweenPositives += arr[i];
+            }
+        }
+
+        Console.WriteLine($"Максимальний за модулем елемент: {maxByAbsolute}");
+        Console.WriteLine($"Сума елементів між першим і другим додатними: {sumBetweenPositives}");
+    }
+}
+
+// Завдання 2
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введіть розмірність матриці (рядки стовпці): ");
+        string[] sizeInput = Console.ReadLine().Split(' ');
+        int rows = int.Parse(sizeInput[0]);
+        int cols = int.Parse(sizeInput[1]);
+
+        double[,] matrix = new double[rows, cols];
+
+        Console.WriteLine("Введіть елементи матриці:");
+
+        for (int i = 0; i < rows; i++)
+        {
+            string[] rowInput = Console.ReadLine().Split(' ');
+            for (int j = 0; j < cols; j++)
+            {
+                matrix[i, j] = double.Parse(rowInput[j]);
+            }
+        }
+
+        // Зведення матриці до трикутного вигляду
+        for (int k = 0; k < rows - 1; k++)
+        {
+            for (int i = k + 1; i < rows; i++)
+            {
+                double factor = matrix[i, k] / matrix[k, k];
+                for (int j = k; j < cols; j++)
+                {
+                    matrix[i, j] -= factor * matrix[k, j];
+                }
+            }
+        }
+
+        Console.Write("Введіть максимально допустиме середнє арифметичне: ");
+        double maxAverage = double.Parse(Console.ReadLine());
+
+        int rowsWithLowerAverage = 0;
+
+        for (int i = 0; i < rows; i++)
+        {
+            double sum = 0;
+            for (int j = 0; j < cols; j++)
+            {
+                sum += matrix[i, j];
+            }
+            double average = sum / cols;
+
+            if (average < maxAverage)
+            {
+                rowsWithLowerAverage++;
+            }
+        }
+
+        Console.WriteLine($"Кількість рядків з меншим середнім арифметичним: {rowsWithLowerAverage}");
+    }
+}
+
+// Завдання 3
+
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Введіть текстовий рядок:");
+        string input = Console.ReadLine();
+
+        // Розділити текст на слова
+        string[] words = Regex.Split(input, @"\W+");
+
+        int wordCount = words.Length;
+        int wordsEndingWithVowelCount = 0;
+
+        Console.WriteLine($"Кількість слів у тексті: {wordCount}");
+        Console.WriteLine("Слова, що закінчуються на голосну літеру:");
+
+        foreach (string word in words)
+        {
+            if (!string.IsNullOrEmpty(word))
+            {
+                char lastChar = word.Last();
+                if ("AEIOUYaeiouy".Contains(lastChar))
+                {
+                    Console.WriteLine(word);
+                    wordsEndingWithVowelCount++;
+                }
+            }
+        }
+
+        Console.WriteLine($"Кількість слів, довжина яких менше 5 символів: {words.Count(w => w.Length < 5)}");
+
+        // Видалити слова, які містять хоча б одну латинську літеру
+        string[] filteredWords = words.Where(w => !Regex.IsMatch(w, "[a-zA-Z]")).ToArray();
+
+        Console.WriteLine("Текст без слів з латинськими літерами:");
+        string resultText = string.Join(" ", filteredWords);
+        Console.WriteLine(resultText);
+    }
+}
